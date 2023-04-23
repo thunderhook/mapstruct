@@ -158,27 +158,36 @@ public class MappingMethodOptions {
                                       AnnotationMirror annotationMirror) {
         MappingMethodOptions templateOptions = templateMethod.getOptions();
         if ( null != templateOptions ) {
-            if ( !getIterableMapping().hasAnnotation() && templateOptions.getIterableMapping().hasAnnotation() ) {
-                setIterableMapping( templateOptions.getIterableMapping() );
-            }
-
-            if ( !getMapMapping().hasAnnotation() && templateOptions.getMapMapping().hasAnnotation() ) {
-                setMapMapping( templateOptions.getMapMapping() );
-            }
-
-            if ( !getBeanMapping().hasAnnotation() && templateOptions.getBeanMapping().hasAnnotation() ) {
-                setBeanMapping( BeanMappingOptions.forInheritance( templateOptions.getBeanMapping( ), isInverse ) );
-            }
-
-            if ( !getEnumMappingOptions().hasAnnotation() && templateOptions.getEnumMappingOptions().hasAnnotation() ) {
-                EnumMappingOptions newEnumMappingOptions;
-                if ( isInverse ) {
-                    newEnumMappingOptions = templateOptions.getEnumMappingOptions().inverse();
+            if ( templateOptions.getIterableMapping() != null) {
+                if ( !getIterableMapping().hasAnnotation() && templateOptions.getIterableMapping().hasAnnotation() ) {
+                    setIterableMapping( templateOptions.getIterableMapping() );
                 }
-                else {
-                    newEnumMappingOptions = templateOptions.getEnumMappingOptions();
+            }
+
+            if ( templateOptions.getMapMapping() != null ) {
+                if ( !getMapMapping().hasAnnotation() && templateOptions.getMapMapping().hasAnnotation() ) {
+                    setMapMapping( templateOptions.getMapMapping() );
                 }
-                setEnumMappingOptions( newEnumMappingOptions );
+            }
+
+            if ( templateOptions.getBeanMapping() != null ) {
+                if ( !getBeanMapping().hasAnnotation() && templateOptions.getBeanMapping().hasAnnotation() ) {
+                    setBeanMapping( BeanMappingOptions.forInheritance( templateOptions.getBeanMapping(), isInverse ) );
+                }
+            }
+
+            if ( templateOptions.getEnumMappingOptions() != null ) {
+                if ( !getEnumMappingOptions().hasAnnotation() &&
+                    templateOptions.getEnumMappingOptions().hasAnnotation() ) {
+                    EnumMappingOptions newEnumMappingOptions;
+                    if ( isInverse ) {
+                        newEnumMappingOptions = templateOptions.getEnumMappingOptions().inverse();
+                    }
+                    else {
+                        newEnumMappingOptions = templateOptions.getEnumMappingOptions();
+                    }
+                    setEnumMappingOptions( newEnumMappingOptions );
+                }
             }
 
             if ( getValueMappings() == null ) {

@@ -231,7 +231,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
         else if ( isValidReferencedMethod( parameters ) || isValidFactoryMethod( method, parameters, returnType )
             || isValidLifecycleCallbackMethod( method )
             || isValidPresenceCheckMethod( method, returnType ) ) {
-            return getReferencedMethod( usedMapper, methodType, method, mapperToImplement, parameters );
+            return getReferencedMethod( usedMapper, methodType, method, mapperToImplement, parameters, mapperOptions );
         }
         else {
             return null;
@@ -364,7 +364,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
 
     private SourceMethod getReferencedMethod(TypeElement usedMapper, ExecutableType methodType,
                                              ExecutableElement method, TypeElement mapperToImplement,
-                                             List<Parameter> parameters) {
+                                             List<Parameter> parameters, MapperOptions mapperOptions) {
         Type returnType = typeFactory.getReturnType( methodType );
         List<Type> exceptionTypes = typeFactory.getThrownTypes( methodType );
         Type usedMapperAsType = typeFactory.getType( usedMapper );
@@ -377,6 +377,16 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
 
         Type definingType = typeFactory.getType( method.getEnclosingElement().asType() );
 
+        BeanMappingOptions beanMappingOptions = BeanMappingOptions.getInstanceOn(
+            BeanMappingGem.instanceOn( method ),
+            mapperOptions,
+            method,
+            messager,
+            typeUtils,
+            typeFactory );
+
+        Set<MappingOptions> mappingOptions = getMappings( method, beanMappingOptions );
+
         return new SourceMethod.Builder()
             .setDeclaringMapper( usedMapper.equals( mapperToImplement ) ? null : usedMapperAsType )
             .setDefininingType( definingType )
@@ -384,6 +394,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             .setParameters( parameters )
             .setReturnType( returnType )
             .setExceptionTypes( exceptionTypes )
+            .setMappingOptions( mappingOptions )
             .setTypeUtils( typeUtils )
             .setTypeFactory( typeFactory )
             .setVerboseLogging( options.isVerbose() )

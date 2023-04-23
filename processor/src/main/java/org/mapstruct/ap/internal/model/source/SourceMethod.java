@@ -358,8 +358,10 @@ public class SourceMethod implements Method {
     }
 
     public boolean canInheritFrom(SourceMethod method) {
-        return method.getDeclaringMapper() == null
-            && method.isAbstract()
+        return
+            // out-commenting this results in 34 test failures
+            // method.getDeclaringMapper() == null &&
+            method.isAbstract()
             && isMapMapping() == method.isMapMapping()
             && isIterableMapping() == method.isIterableMapping()
             && isEnumMapping( this ) == isEnumMapping( method )
